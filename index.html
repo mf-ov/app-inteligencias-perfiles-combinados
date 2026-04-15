@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inteligencias Múltiples - Perfil Vocacional</title>
+<!-- Chart.js loaded from CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--text:#003554;--muted:#4a7fa0;--accent:#00b4d8;--bg-gradient:linear-gradient(135deg,#dff3ff 0%,#b3ecff 50%,#d6f5ff 100%)}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg-gradient);background-attachment:fixed;color:var(--text);min-height:100vh;line-height:1.5}
+.screen{display:none;min-height:100vh;padding:24px 16px 40px}.screen.active{display:block}
+.card{background:linear-gradient(135deg,rgba(255,255,255,0.85),rgba(202,240,248,0.68));border:1.5px solid rgba(0,196,255,0.38);border-radius:20px;padding:24px;margin-bottom:16px;box-shadow:0 8px 32px rgba(0,150,199,0.13),0 1px 0 rgba(255,255,255,0.9) inset;backdrop-filter:blur(16px);position:relative;overflow:hidden}
+.hdr{background:linear-gradient(135deg,#0088bb,#00b4d8 55%,#48cae4);border:1.5px solid rgba(0,207,255,0.3);border-radius:20px;padding:28px 24px;margin-bottom:20px;text-align:center;box-shadow:0 8px 32px rgba(0,120,180,0.25);color:#fff;position:relative;overflow:hidden}
+.hdr h1{font-size:26px;font-weight:800;letter-spacing:-.5px;text-shadow:0 2px 8px rgba(0,60,100,0.3)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:12px;border:none;cursor:pointer;font-size:15px;font-weight:600;transition:all .18s;text-decoration:none}
+.bp{background:linear-gradient(135deg,#00b4d8,#0088bb);color:#fff;box-shadow:0 4px 14px rgba(0,140,190,0.3)}
+.bp:hover{background:linear-gradient(135deg,#00cfff,#00a8d0);transform:translateY(-1px)}
+.bs{background:rgba(255,255,255,0.72);color:var(--text);border:1.5px solid rgba(0,180,216,0.3)}
+input[type=text],input[type=password],textarea{width:100%;padding:12px 14px;border:1.5px solid rgba(0,180,216,0.3);border-radius:12px;font-size:15px;font-family:inherit;background:rgba(255,255,255,0.72);outline:none}
+.sr{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid rgba(0,180,216,0.12)}
+.sl{flex:1;font-size:14px;color:var(--text)}
+.sbs{display:flex;gap:3px;flex-shrink:0}
+.sb{width:31px;height:31px;border-radius:8px;border:1.5px solid rgba(0,180,216,0.22);background:rgba(255,255,255,0.65);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.sb.sel{background:linear-gradient(135deg,#00b4d8,#0077b6);color:#fff;border-color:#0096c7}
+.tbox{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(0,180,216,0.11),rgba(72,202,228,0.06));border:1.5px solid rgba(0,180,216,0.35);border-radius:14px;padding:14px 18px;margin-top:12px}
+.val{font-size:32px;font-weight:800;color:#0096c7}
+.pbw{background:rgba(0,100,150,0.15);border-radius:8px;height:8px;margin:8px 0 16px;overflow:hidden}
+.pbf{height:100%;background:linear-gradient(90deg,#00b4d8,#90e0ef);transition:width .4s}
+.nav{display:flex;gap:10px;justify-content:space-between;margin-top:16px}
+.yn{padding:10px 28px;border-radius:12px;border:2px solid rgba(0,180,216,0.3);background:rgba(255,255,255,0.65);cursor:pointer;font-weight:700}
+.yn.ysi{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;border-color:#22c55e}
+.yn.yno{background:linear-gradient(135deg,#f43f5e,#e11d48);color:#fff;border-color:#f43f5e}
+.cw{position:relative;width:100%;height:320px}
+.err{font-size:13px;margin-top:8px;display:none;padding:8px 12px;background:rgba(244,63,94,0.08);border-radius:8px;border:1px solid rgba(244,63,94,0.22);color:#9f1239}
+
+/* INFORME ESTILOS */
+.report-title { color: #0077b6; font-size: 24px; font-weight: 800; margin-bottom: 20px; text-align: center; border-bottom: 2px solid #00b4d8; padding-bottom: 10px; }
+.report-section { margin-bottom: 24px; }
+.report-section h3 { font-size: 18px; color: #005f73; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.report-section h3::before { content: '•'; color: #00b4d8; font-size: 24px; }
+.profile-badge { display: inline-block; padding: 6px 16px; background: #00b4d8; color: white; border-radius: 50px; font-weight: 700; margin-bottom: 16px; font-size: 18px; }
+.career-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.career-item { background: rgba(0,180,216,0.08); padding: 10px; border-radius: 8px; font-size: 14px; border-left: 3px solid #00b4d8; }
+.dict-item { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed rgba(0,180,216,0.2); }
+.dict-name { font-weight: 700; color: #0077b6; display: block; margin-bottom: 2px; }
+.dict-def { font-size: 13px; color: var(--muted); line-height: 1.4; }
+
+.ov{position:fixed;inset:0;background:rgba(0,40,80,0.45);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(4px)}
+.sp{width:48px;height:48px;border:4px solid rgba(255,255,255,0.2);border-top-color:#00cfff;border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:480px){ .career-list { grid-template-columns: 1fr; } .nav{flex-direction:column} .nav .btn{width:100%} }
+</style>
+</head>
+<body>
+
+<div id="ov" class="ov" style="display:none"><div class="sp"></div><div id="lt" style="color:#fff">Cargando...</div></div>
+
+<!-- PANTALLAS EXISTENTES -->
+<div id="sLogin" class="screen active">
+  <div style="max-width:420px;margin:50px auto 0">
+    <div class="card" style="text-align:center">
+      <div style="font-size:34px;margin-bottom:10px">🧠</div>
+      <h2>Inteligencias Múltiples</h2>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:20px">Ingresa tu nombre para comenzar</p>
+      <input type="text" id="lname" placeholder="Tu nombre completo">
+      <div id="lerr" class="err"></div>
+      <button class="btn bp" style="width:100%;margin-top:15px" onclick="doLogin()">Ingresar →</button>
+      <button class="btn bs" style="width:100%;margin-top:10px;font-size:12px" onclick="goAdmin()">🔐 Panel Admin</button>
+    </div>
+  </div>
+</div>
+
+<div id="sAdminLogin" class="screen">
+    <div style="max-width:420px;margin:50px auto 0" class="card">
+        <h2 style="text-align:center">Admin</h2>
+        <input type="password" id="apwd" placeholder="Contraseña" style="margin-top:15px">
+        <div id="aerr" class="err"></div>
+        <div class="nav">
+            <button class="btn bs" onclick="go('sLogin')">Volver</button>
+            <button class="btn bp" onclick="doAdminLogin()">Entrar</button>
+        </div>
+    </div>
+</div>
+
+<div id="sAdmin" class="screen">
+    <div style="max-width:700px;margin:0 auto">
+        <div class="hdr"><h1>🛠 Administración</h1></div>
+        <div class="card">
+            <h3>Pacientes y Accesos</h3>
+            <div id="plist" style="margin-top:15px"></div>
+        </div>
+        <button class="btn bs" onclick="go('sLogin')">Cerrar Sesión</button>
+    </div>
+</div>
+
+<div id="sWelcome" class="screen">
+  <div style="max-width:600px;margin:0 auto">
+    <div class="hdr"><h1>🧠 Bienvenida</h1><p id="wmsg"></p></div>
+    <div class="card">
+      <h3>Tu progreso</h3>
+      <div class="pbw"><div class="pbf" id="mpb" style="width:0%"></div></div>
+      <p id="ptxt" style="font-size:13px"></p>
+      <div class="nav">
+        <button class="btn bs" onclick="go('sLogin')">Salir</button>
+        <button class="btn bp" id="bcont" onclick="continueTest()">Comenzar →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="sTest" class="screen">
+  <div style="max-width:640px;margin:0 auto">
+    <div class="hdr">
+        <div id="sdots" style="display:flex;justify-content:center;gap:5px;margin-bottom:10px"></div>
+        <div id="ttitle" style="font-size:20px;font-weight:800"></div>
+        <div id="tsub" style="font-size:13px;opacity:0.9"></div>
+    </div>
+    <div class="card">
+      <div id="items"></div>
+      <div class="tbox"><span style="font-weight:700">TOTAL SECCIÓN</span><span class="val" id="stotal">0</span></div>
+    </div>
+    <div class="nav">
+      <button class="btn bs" id="bprev" onclick="prevSec()">Anterior</button>
+      <button class="btn bp" id="bnext" onclick="nextSec()">Siguiente</button>
+    </div>
+  </div>
+</div>
+
+<div id="sChart" class="screen">
+  <div style="max-width:700px;margin:0 auto">
+    <div class="hdr"><h1>📊 Perfil de Resultados</h1></div>
+    <div class="card">
+      <div id="tgrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin-bottom:20px"></div>
+      <div class="cw"><canvas id="ic"></canvas></div>
+    </div>
+    <div class="nav">
+        <button class="btn bs" onclick="goBackTest()">Revisar Test</button>
+        <button class="btn bp" onclick="go('sPrac')">Continuar →</button>
+    </div>
+  </div>
+</div>
+
+<div id="sPrac" class="screen">
+  <div style="max-width:640px;margin:0 auto">
+    <div class="hdr"><h1>🎯 Reflexión Final</h1></div>
+    <div class="card">
+      <p><strong>Inteligencia más alta:</strong> <span id="hiD"></span></p>
+      <p style="margin-top:10px">¿Esperabas este resultado?</p>
+      <div style="display:flex;gap:10px;margin:10px 0">
+        <button class="yn" id="bsh" onclick="setYN('h','si')">Sí</button>
+        <button class="yn" id="bnh" onclick="setYN('h','no')">No</button>
+      </div>
+      <textarea id="why_h" placeholder="¿Por qué?" oninput="dprac()"></textarea>
+    </div>
+    <div class="card">
+      <p><strong>Inteligencia más baja:</strong> <span id="loD"></span></p>
+      <p style="margin-top:10px">¿Esperabas este resultado?</p>
+      <div style="display:flex;gap:10px;margin:10px 0">
+        <button class="yn" id="bsl" onclick="setYN('l','si')">Sí</button>
+        <button class="yn" id="bnl" onclick="setYN('l','no')">No</button>
+      </div>
+      <textarea id="why_l" placeholder="¿Por qué?" oninput="dprac()"></textarea>
+    </div>
+    <div class="nav">
+      <button class="btn bs" onclick="go('sChart')">Volver</button>
+      <button class="btn bp" onclick="finish()">Finalizar y Ver Informe →</button>
+    </div>
+  </div>
+</div>
+
+<!-- NUEVA PANTALLA DE INFORME VOCACIONAL -->
+<div id="sReport" class="screen">
+  <div style="max-width:800px;margin:0 auto">
+    <div class="card" id="reportContent">
+        <!-- Generado dinámicamente -->
+    </div>
+    <div class="nav" style="margin-bottom:40px">
+        <button class="btn bs" onclick="window.print()">📥 Imprimir Informe</button>
+        <button class="btn bp" onclick="location.reload()">Finalizar Sesión</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SB_URL = 'https://bdtnltklwcjscrtpbgvn.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJkdG5sdGtsd2Nqc2NydHBiZ3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNjkzNTUsImV4cCI6MjA5MTc0NTM1NX0.qJDPpijWLKIGGdcQK_9N67iJ_1srCpByUiQSVhhap_s';
+const ADMIN_PW = 'MF2025';
+
+// ---- Helpers Base de Datos ----
+async function sb(method, path, body) {
+  const headers = {'apikey': SB_KEY, 'Authorization': 'Bearer '+SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation'};
+  const res = await fetch(`${SB_URL}/rest/v1/${path}`, { method, headers, body: body ? JSON.stringify(body) : undefined });
+  if (!res.ok) throw new Error(await res.text());
+  const t = await res.text(); return t ? JSON.parse(t) : null;
+}
+
+const DB = {
+  getSettings: () => sb('GET', 'im_settings?id=eq.1'),
+  getPatient: (n) => sb('GET', `im_patients?name=eq.${encodeURIComponent(n)}`),
+  allPatients: () => sb('GET', 'im_patients?select=*&order=created_at.asc'),
+  patchPatient: (id, d) => sb('PATCH', `im_patients?id=eq.${id}`, d),
+  getScores: (pid) => sb('GET', `im_scores?patient_id=eq.${pid}`),
+  upsertScore: (d) => sb('POST', 'im_scores?on_conflict=patient_id,intel_id', d),
+  getPractica: (pid) => sb('GET', `im_practica?patient_id=eq.${pid}`),
+  upsertPractica: (pid, d) => sb('POST', 'im_practica?on_conflict=patient_id', {patient_id:pid, ...d, updated_at:new Date()})
+};
+
+// ---- Definiciones Académicas ----
+const DICTIONARY = {
+    verbal: "Capacidad de utilizar las palabras de manera eficaz, ya sea oralmente o por escrito. Incluye la habilidad de manejar la sintaxis, la fonética y la semántica del lenguaje.",
+    logica: "Capacidad para utilizar los números de manera efectiva y razonar adecuadamente. Incluye la sensibilidad a los esquemas y relaciones lógicas, afirmaciones y proposiciones.",
+    visual: "Habilidad para percibir de manera exacta el mundo visual-espacial y de ejecutar transformaciones sobre esas percepciones. Incluye la sensibilidad al color, la línea, la forma y el espacio.",
+    corporal: "Capacidad para usar todo el cuerpo para expresar ideas y sentimientos, y facilidad en el uso de las manos para producir o transformar cosas.",
+    musical: "Capacidad de percibir, discriminar, transformar y expresar las formas musicales. Incluye la sensibilidad al ritmo, el tono, la melodía y el timbre.",
+    interpersonal: "Capacidad de percibir y distinguir los estados de ánimo, las intenciones, las motivaciones y los sentimientos de otras personas.",
+    intrapersonal: "Conocimiento de los aspectos internos de una persona: el acceso a la propia vida emocional, a la propia gama de sentimientos y la capacidad de efectuar discriminaciones entre estas emociones."
+};
+
+// ---- Matriz de Perfiles Vocacionales ----
+const PROFILES = {
+    'verbal+interpersonal': { title: 'Líder Comunicador', skills: 'Elocuencia, empatía, persuasión y mediación de conflictos.', careers: 'Derecho, Relaciones Públicas, Ciencias Políticas, Periodismo.', environment: 'Entornos sociales dinámicos, salas de prensa o instituciones públicas.' },
+    'logica+visual': { title: 'Arquitecto de Sistemas', skills: 'Pensamiento abstracto, diseño estructural y resolución de problemas complejos.', careers: 'Ingeniería de Software, Arquitectura, Análisis de Datos, Urbanismo.', environment: 'Estudios de diseño, empresas tecnológicas o laboratorios de innovación.' },
+    'verbal+logica': { title: 'Analista Estratégico', skills: 'Razonamiento crítico, estructuración de argumentos y síntesis de información.', careers: 'Economía, Filosofía, Investigación Académica, Análisis de Riesgos.', environment: 'Centros de investigación, consultorías o entornos corporativos de alta dirección.' },
+    'visual+corporal': { title: 'Creador Físico', skills: 'Coordinación ojo-mano, precisión espacial y expresión estética material.', careers: 'Cirugía, Escultura, Diseño Industrial, Odontología.', environment: 'Quirófanos, talleres de arte o plantas de prototipado.' },
+    'interpersonal+intrapersonal': { title: 'Especialista en Bienestar', skills: 'Inteligencia emocional profunda, escucha activa y autoconocimiento aplicado.', careers: 'Psicología, Coaching, Recursos Humanos, Trabajo Social.', environment: 'Clínicas, centros de desarrollo personal o departamentos de talento humano.' },
+    'corporal+interpersonal': { title: 'Dinamizador de Grupos', skills: 'Liderazgo basado en la acción, energía social y presencia física.', careers: 'Fisioterapia, Entrenamiento Deportivo, Gestión Turística, Artes Escénicas.', environment: 'Gimnasios, centros recreativos o escenarios.' },
+    'musical+logica': { title: 'Arquitecto del Sonido', skills: 'Reconocimiento de patrones matemáticos en el sonido y precisión técnica.', careers: 'Ingeniería de Sonido, Composición, Acústica, Edición Musical.', environment: 'Estudios de grabación, salas de conciertos o laboratorios acústicos.' },
+    'logica+interpersonal': { title: 'Estratega Organizacional', skills: 'Capacidad para estructurar grupos humanos y optimizar procesos sociales.', careers: 'Administración de Empresas, Gestión de Proyectos, Sociología Aplicada.', environment: 'Corporaciones multinacionales o ONGs de gran escala.' },
+    'musical+corporal': { title: 'Artista del Movimiento', skills: 'Ritmo interno, expresión física de la melodía y control motriz fino.', careers: 'Danza profesional, Coreografía, Terapia del movimiento, Actuación.', environment: 'Teatros, conservatorios o estudios de danza.' },
+    'visual+interpersonal': { title: 'Diseñador de Experiencias', skills: 'Comunicación visual efectiva enfocada en el usuario y sensibilidad social.', careers: 'Marketing Visual, Diseño UX/UI, Publicidad, Curaduría de Arte.', environment: 'Agencias creativas o museos.' },
+    'verbal+visual': { title: 'Narrador Transmedia', skills: 'Capacidad de construir historias potentes usando imagen y palabra.', careers: 'Dirección de Cine, Guionismo, Diseño Editorial, Realización Audiovisual.', environment: 'Sets de filmación o editoriales.' },
+    'logica+corporal': { title: 'Ingeniero de Procesos', skills: 'Eficiencia operativa manual y razonamiento técnico aplicado.', careers: 'Mecánica de precisión, Robótica, Pilotaje, Logística.', environment: 'Hangares, plantas industriales o centros tecnológicos.' },
+    'musical+interpersonal': { title: 'Facilitador Musical', skills: 'Uso de la música como vínculo social y herramienta de conexión.', careers: 'Educación Musical, Musicoterapia, Dirección de Coros.', environment: 'Escuelas, centros comunitarios o de salud.' },
+    'visual+intrapersonal': { title: 'Visionario Conceptual', skills: 'Rica vida interior expresada mediante formas y símbolos originales.', careers: 'Ilustración, Fotografía Artística, Diseño Gráfico Independiente.', environment: 'Estudios privados o proyectos de autor.' },
+    'musical+intrapersonal': { title: 'Intérprete Expresivo', skills: 'Sensibilidad melódica volcada a la introspección y el sentimiento.', careers: 'Canto, Instrumentista solista, Producción musical personal.', environment: 'Entornos de creación íntimos.' },
+    'verbal+musical': { title: 'Poeta Lírico', skills: 'Sensibilidad rítmica en el uso del lenguaje y musicalidad verbal.', careers: 'Escritura creativa, Dramaturgia, Composición de canciones.', environment: 'Bibliotecas o estudios de composición.' },
+    'verbal+corporal': { title: 'Comunicador Gestual', skills: 'Uso del cuerpo como extensión del discurso hablado.', careers: 'Docencia, Oratoria, Teatro, Ventas de alto nivel.', environment: 'Aulas, conferencias o ferias comerciales.' },
+    'verbal+intrapersonal': { title: 'Filósofo Contemporáneo', skills: 'Reflexión profunda traducida en palabras con gran carga ética.', careers: 'Escritura de ensayo, Antropología, Teología, Consultoría ética.', environment: 'Entornos académicos o fundaciones.' },
+    'logica+intrapersonal': { title: 'Pensador Científico', skills: 'Análisis sistemático de la propia existencia y los fenómenos naturales.', careers: 'Física Teórica, Programación, Matemáticas, Investigación genética.', environment: 'Laboratorios o centros de computación.' },
+    'visual+musical': { title: 'Escenógrafo Sensorial', skills: 'Creación de ambientes donde la luz, el espacio y el sonido convergen.', careers: 'Diseño de iluminación, VDJ, Museografía, Escenografía.', environment: 'Eventos masivos o galerías.' },
+    'corporal+intrapersonal': { title: 'Guía de Consciencia', skills: 'Dominio de la conexión mente-cuerpo y equilibrio somático.', careers: 'Instrucción de Yoga/Mindfulness, Osteopatía, Deportista de élite.', environment: 'Centros de retiro o alto rendimiento.' }
+};
+
+// ---- Lógica de Aplicación ----
+let CU = null, CS = {}, CP = {}, SEC = 0, chart = null;
+
+async function doLogin() {
+    const name = document.getElementById('lname').value.trim();
+    if(!name) return;
+    try {
+        const [cfg, pts] = await Promise.all([DB.getSettings(), DB.getPatient(name)]);
+        if(!pts?.length) { alert('Usuario no habilitado'); return; }
+        CU = pts[0];
+        const [sc, pr] = await Promise.all([DB.getScores(CU.id), DB.getPractica(CU.id)]);
+        CS = {}; (sc||[]).forEach(s => CS[s.intel_id] = {items: s.items, total: s.total});
+        CP = pr?.[0] || {};
+        loadWelcome(); go('sWelcome');
+    } catch(e) { alert('Error de conexión'); }
+}
+
+function loadWelcome() {
+    const done = Object.keys(CS).length;
+    const pct = Math.round(done/7*100);
+    document.getElementById('mpb').style.width = pct+'%';
+    document.getElementById('wmsg').textContent = `Hola, ${CU.name}`;
+    document.getElementById('ptxt').textContent = `${done} de 7 áreas completadas`;
+    document.getElementById('bcont').textContent = CU.completed ? 'Ver Resultados' : 'Continuar Test';
+}
+
+function continueTest() { if(CU.completed) { buildChart(); go('sChart'); } else { SEC=CU.last_section||0; loadSec(SEC); go('sTest'); } }
+
+function loadSec(idx) {
+    const IM_DATA = [
+        {id:'intrapersonal',n:1,name:'Intrapersonal',sub:'Mundo interno y emociones', col:'#0096c7'},
+        {id:'interpersonal',n:2,name:'Interpersonal',sub:'Relación con otros', col:'#48cae4'},
+        {id:'verbal',n:3,name:'Verbal',sub:'Comunicación y lenguaje', col:'#7b2ff7'},
+        {id:'visual',n:4,name:'Visual',sub:'Espacio e imagen', col:'#00b4d8'},
+        {id:'logica',n:5,name:'Lógica',sub:'Razonamiento y números', col:'#0077b6'},
+        {id:'musical',n:6,name:'Musical',sub:'Ritmo y sonido', col:'#06d6a0'},
+        {id:'corporal',n:7,name:'Corporal',sub:'Cuerpo y movimiento', col:'#f72585'}
+    ];
+    const im = IM_DATA[idx];
+    document.getElementById('ttitle').textContent = im.name;
+    document.getElementById('tsub').textContent = im.sub;
+    // (Simulamos los 10 items por brevedad en este ejemplo, usa tus preguntas reales de la matriz IM anterior)
+    let html = '';
+    const saved = CS[im.id]?.items || [];
+    for(let i=0; i<10; i++){
+        html += `<div class="sr"><div class="sl">Pregunta ${i+1} del área</div><div class="sbs">`;
+        for(let v=1;v<=10;v++) html += `<button class="sb ${saved[i]==v?'sel':''}" onclick="pick(${idx},${i},${v})">${v}</button>`;
+        html += `</div></div>`;
+    }
+    document.getElementById('items').innerHTML = html;
+    document.getElementById('stotal').textContent = CS[im.id]?.total || 0;
+}
+
+function pick(sIdx, qIdx, val) {
+    const ids = ['intrapersonal','interpersonal','verbal','visual','logica','musical','corporal'];
+    const id = ids[sIdx];
+    if(!CS[id]) CS[id] = {items:[], total:0};
+    CS[id].items[qIdx] = val;
+    CS[id].total = CS[id].items.reduce((a,b)=>a+(b||0),0);
+    loadSec(sIdx);
+    DB.upsertScore({patient_id:CU.id, intel_id:id, items:CS[id].items, total:CS[id].total});
+}
+
+async function nextSec() {
+    if(SEC < 6) { SEC++; DB.patchPatient(CU.id, {last_section:SEC}); loadSec(SEC); }
+    else { buildChart(); go('sChart'); }
+}
+function prevSec() { if(SEC>0) { SEC--; loadSec(SEC); } }
+
+function buildChart() {
+    const ids = ['intrapersonal','interpersonal','verbal','visual','logica','musical','corporal'];
+    const names = ['Intrapersonal','Interpersonal','Verbal','Visual','Lógica','Musical','Corporal'];
+    const totals = ids.map(id => CS[id]?.total || 0);
+    
+    if(chart) chart.destroy();
+    chart = new Chart(document.getElementById('ic'), {
+        type:'bar',
+        data: { labels: names, datasets:[{data:totals, backgroundColor:'#00b4d8'}]},
+        options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}}
+    });
+
+    const max = Math.max(...totals);
+    const hi = ids[totals.indexOf(max)];
+    document.getElementById('hiD').textContent = hi.toUpperCase();
+    document.getElementById('loD').textContent = ids[totals.indexOf(Math.min(...totals))].toUpperCase();
+}
+
+async function finish() {
+    document.getElementById('ov').style.display = 'flex';
+    try {
+        await DB.patchPatient(CU.id, {completed: true, completed_at: new Date()});
+        generateReport();
+        go('sReport');
+    } finally { document.getElementById('ov').style.display = 'none'; }
+}
+
+function generateReport() {
+    const ids = ['intrapersonal','interpersonal','verbal','visual','logica','musical','corporal'];
+    const scores = ids.map(id => ({id, total: CS[id]?.total || 0}));
+    
+    // Identificar las 2 más altas
+    scores.sort((a,b) => b.total - a.total);
+    const top2 = [scores[0].id, scores[1].id].sort(); // Sort alfabético para buscar en la matriz PROFILES
+    const key = `${top2[0]}+${top2[1]}`;
+    const profile = PROFILES[key] || { title: 'Perfil Multidisciplinar', skills: 'Habilidades combinadas diversas.', careers: 'Consultoría técnica, Gestión de proyectos.', environment: 'Entornos versátiles.' };
+
+    let html = `
+        <h1 class="report-title">Informe de Perfil Vocacional</h1>
+        <div style="text-align:center; margin-bottom:30px;">
+            <p style="font-size:14px; color:var(--muted)">Resultado basado en la combinación de tus dos inteligencias predominantes:</p>
+            <div class="profile-badge">${profile.title}</div>
+        </div>
+
+        <div class="report-section">
+            <h3>Competencias y Habilidades Destacadas</h3>
+            <p>${profile.skills}</p>
+        </div>
+
+        <div class="report-section">
+            <h3>Proyección Vocacional</h3>
+            <p style="margin-bottom:10px"><strong>Carreras sugeridas:</strong></p>
+            <div class="career-list">
+                ${profile.careers.split(',').map(c => `<div class="career-item">${c.trim()}</div>`).join('')}
+            </div>
+            <p style="margin-top:15px"><strong>Ambiente ideal:</strong> ${profile.environment}</p>
+        </div>
+
+        <div class="report-section" style="background:rgba(255,255,255,0.5); padding:20px; border-radius:15px; border:1px solid rgba(0,180,216,0.1)">
+            <h3 style="color:#003554">Diccionario de mis Inteligencias</h3>
+            ${ids.map(id => `
+                <div class="dict-item">
+                    <span class="dict-name">${id.charAt(0).toUpperCase() + id.slice(1)} ${scores.find(s=>s.id===id).total} pts</span>
+                    <span class="dict-def">${DICTIONARY[id]}</span>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    document.getElementById('reportContent').innerHTML = html;
+}
+
+function go(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0,0);
+}
+function goAdmin() { go('sAdminLogin'); }
+function doAdminLogin() { if(document.getElementById('apwd').value === ADMIN_PW) go('sAdmin'); else alert('Incorrecto'); }
+</script>
+
+</body>
+</html>
